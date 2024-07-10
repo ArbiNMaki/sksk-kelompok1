@@ -11,7 +11,6 @@ public record AuctionBid(Long id, //
                          Long bidder, //
                          OffsetDateTime createdAt //
 ) {
-
     public static final String TABLE_NAME = "sk_auction_bit";
 
     public PreparedStatement insert(final Connection connection) {

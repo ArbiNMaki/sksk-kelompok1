@@ -118,4 +118,16 @@ public class AuctionRepository {
             return 0L;
         }
     }
+
+    public List<AuctionBid> findBiddingByAuctionId(Long auctionId) {
+        String sql = "SELECT * FROM %s WHERE auction_id = ?".formatted(AuctionBid.TABLE_NAME);
+        return jdbcTemplate.query(sql, new Object[]{auctionId}, (rs, rowNum) -> new AuctionBid(
+                rs.getLong("id"),
+                rs.getLong("auction_id"),
+                rs.getInt("bid"),
+                rs.getLong("bidder"),
+                rs.getTimestamp("created_at").toInstant().atOffset(ZoneOffset.UTC)
+        ));
+    }
+
 }

@@ -49,16 +49,9 @@ public class AuctionController  {
         return auctionService.updateAuctionStatus(authentication, req);
     }
 
-    @PostMapping("/bidding")
-    public Response<Object> createBidding(@RequestBody BuyerCreateBiddingReq req) {
+    @PostMapping("/list/{id}")
+    public Response<Object> createBidding(@PathVariable("id") Long id, @RequestBody BuyerCreateBiddingReq req) {
         Authentication authentication = SecurityContextHolder.getAuthentication();
-        return auctionService.createBidding(authentication, req);
+        return auctionService.createBidding(authentication, req, id);
     }
-
-    @GetMapping("/bidding/{id}")
-    public Response<Object> getBiddingByIdAuction(@PathVariable("id") Long id) {
-        Authentication authentication = SecurityContextHolder.getAuthentication();
-        return auctionService.getAuctionById(authentication, id);
-    }
-
 }

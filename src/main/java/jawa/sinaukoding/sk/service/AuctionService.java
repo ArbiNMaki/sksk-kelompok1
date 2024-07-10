@@ -9,12 +9,16 @@ import jawa.sinaukoding.sk.model.request.SellerCreateAuctionReq;
 import jawa.sinaukoding.sk.model.Response;
 import jawa.sinaukoding.sk.model.request.UpdateStatusReq;
 import jawa.sinaukoding.sk.model.response.AuctionDto;
+import jawa.sinaukoding.sk.model.response.BiddingDto;
+import jawa.sinaukoding.sk.model.response.ListAuctionWithBiddingDto;
 import jawa.sinaukoding.sk.repository.AuctionRepository;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -83,25 +87,40 @@ public final class AuctionService extends AbstractService {
 
     public Response<Object> getAuctionById(final Authentication authentication, final Long id) {
         return precondition(authentication, User.Role.ADMIN, User.Role.SELLER, User.Role.BUYER).orElseGet(() -> {
-            List<Auction> auction = auctionRepository.findById(id);
+            List<Auction> auctions = auctionRepository.findById(id);
 
-            if (auction == null) {
-                return Response.create("09","01", "Auction not found", null);
+            if (auctions.isEmpty()) {
+                return Response.create("09", "01", "Auction not found", null);
             }
 
-//            final List<Auction> auctions = auctionRepository.findById(id);
-            final List<AuctionDto> dto = auction.stream()
-                    .map(auctionList -> new AuctionDto(
-                            auctionList.id(),
-                            auctionList.code(),
-                            auctionList.name(),
-                            auctionList.description(),
-                            auctionList.offer(),
-                            auctionList.startedAt().toString(),
-                            auctionList.endedAt().toString(),
-                            auctionList.status().toString())).toList();
+            Auction auction = auctions.get(0);
+            List<AuctionBid> biddings = auctionRepository.findBiddingByAuctionId(auction.id());
 
-            return Response.create("09", "00", "Sukses", dto);
+            AuctionDto auctionDto = new AuctionDto(
+                    auction.id(),
+                    auction.code(),
+                    auction.name(),
+                    auction.description(),
+                    auction.offer(),
+                    auction.startedAt().toString(),
+                    auction.endedAt().toString(),
+                    auction.status().toString()
+            );
+
+            List<BiddingDto> biddingDtos = biddings.stream()
+                    .map(bid -> new BiddingDto(
+                            bid.id(),
+                            bid.auctionId(),
+                            bid.bid(),
+                            bid.bidder(),
+                            bid.createdAt().toString()
+                    )).toList();
+
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("auction", auctionDto);
+            responseData.put("bidding", biddingDtos);
+
+            return Response.create("09", "00", "Sukses", responseData);
         });
     }
 
@@ -195,15 +214,20 @@ public final class AuctionService extends AbstractService {
         });
     }
 
-    public Response<Object> createBidding(final Authentication authentication, final BuyerCreateBiddingReq req) {
+    public Response<Object> createBidding(final Authentication authentication, final BuyerCreateBiddingReq req, final Long id) {
         return precondition(authentication, User.Role.BUYER).orElseGet(() -> {
             if (req == null) {
                 return Response.badRequest();
             }
 
-            final AuctionBid bid = new AuctionBid( //
+            List<Auction> bidingId = auctionRepository.findById(id);
+            if (bidingId.isEmpty()) {
+                return Response.create("05", "01", "Auction not found.", null);
+            }
+
+            final AuctionBid bid = new AuctionBid(
                     null,
-                    req.auctionId(),
+                    id,
                     req.bid(),
                     req.bidder(),
                     OffsetDateTime.now()
