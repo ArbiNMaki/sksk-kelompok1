@@ -107,7 +107,7 @@ public final class AuctionService extends AbstractService {
                     auction.status().toString()
             );
 
-            List<BiddingDto> biddingDtos = biddings.stream()
+            List<BiddingDto> biddingDto = biddings.stream()
                     .map(bid -> new BiddingDto(
                             bid.id(),
                             bid.auctionId(),
@@ -118,7 +118,7 @@ public final class AuctionService extends AbstractService {
 
             Map<String, Object> responseData = new HashMap<>();
             responseData.put("auction", auctionDto);
-            responseData.put("bidding", biddingDtos);
+            responseData.put("bidding", biddingDto);
 
             return Response.create("09", "00", "Sukses", responseData);
         });
