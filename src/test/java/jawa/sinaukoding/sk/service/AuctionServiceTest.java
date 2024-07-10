@@ -133,4 +133,29 @@ class AuctionServiceTest {
     // List Auction By ID
 
     // Update Status By ID
+
+    @Test
+    void closeAuctionStatus() {
+        final UpdateStatusReq req = new UpdateStatusReq(1L, Auction.Status.CLOSED);
+        final Auction auction = new Auction(
+                1L, "code", "Barang Lelang", "Ini Barang di Lelang.", 1000, null,
+                1L, "name", Auction.Status.APPROVED, OffsetDateTime.now(),
+                OffsetDateTime.now(), null, null, null,
+                OffsetDateTime.now(), OffsetDateTime.now(), null
+        );
+
+        final List<Auction> auctions = List.of(auction);
+
+        Mockito.when(auctionRepository.findById(1L)).thenReturn(auctions);
+        Mockito.when(auctionRepository.closeAuctionStatus(ArgumentMatchers.any(Auction.class))).thenReturn(1L);
+
+        final User seller = userRepository.findById(2L).orElseThrow();
+        final Authentication authentication = new Authentication(seller.id(), seller.role(), true);
+        final Response<Object> response = auctionService.closeAuctionStatus(authentication, req);
+
+        Assertions.assertNotNull(response);
+        Assertions.assertEquals("0700", response.code());
+        Assertions.assertEquals("Sukses", response.message());
+        Assertions.assertEquals(1L, response.data());
+    }
 }

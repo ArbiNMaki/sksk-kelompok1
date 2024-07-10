@@ -1,8 +1,10 @@
 package jawa.sinaukoding.sk.service;
 
 import jawa.sinaukoding.sk.entity.Auction;
+import jawa.sinaukoding.sk.entity.AuctionBid;
 import jawa.sinaukoding.sk.entity.User;
 import jawa.sinaukoding.sk.model.Authentication;
+import jawa.sinaukoding.sk.model.request.BuyerCreateBiddingReq;
 import jawa.sinaukoding.sk.model.request.SellerCreateAuctionReq;
 import jawa.sinaukoding.sk.model.Response;
 import jawa.sinaukoding.sk.model.request.UpdateStatusReq;
@@ -188,7 +190,31 @@ public final class AuctionService extends AbstractService {
             if (updated == 1L) {
                 return Response.create("07", "00", "Sukses", updated);
             } else {
-                return Response.create("07", "01", "Gagal reset password", null);
+                return Response.create("07", "01", "Gagal Close Status", null);
+            }
+        });
+    }
+
+    public Response<Object> createBidding(final Authentication authentication, final BuyerCreateBiddingReq req) {
+        return precondition(authentication, User.Role.BUYER).orElseGet(() -> {
+            if (req == null) {
+                return Response.badRequest();
+            }
+
+            final AuctionBid bid = new AuctionBid( //
+                    null,
+                    req.auctionId(),
+                    req.bid(),
+                    req.bidder(),
+                    OffsetDateTime.now()
+            );
+
+            final Long saved = auctionRepository.saveBidding(bid);
+
+            if (saved == 0L) {
+                return Response.create("05", "01", "Gagal membuat bidding.", null);
+            } else {
+                return Response.create("05", "00", "Sukses membuat bidding.", saved);
             }
         });
     }
