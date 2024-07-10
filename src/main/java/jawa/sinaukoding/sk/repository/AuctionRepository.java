@@ -1,6 +1,7 @@
 package jawa.sinaukoding.sk.repository;
 
 import jawa.sinaukoding.sk.entity.Auction;
+import jawa.sinaukoding.sk.entity.AuctionBid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -93,4 +94,40 @@ public class AuctionRepository {
             return 0L;
         }
     }
+
+    public long closeAuctionStatus(Auction auction) {
+        String sql = "UPDATE %s SET status = ? WHERE id = ?".formatted(Auction.TABLE_NAME);
+        try {
+            return jdbcTemplate.update(sql, auction.status().toString(), auction.id());
+        } catch (Exception e) {
+            log.error("Failed to close auction status: {}", e.getMessage());
+            return 0L;
+        }
+    }
+
+    public long saveBidding(final AuctionBid bidding) {
+        final KeyHolder keyHolder = new GeneratedKeyHolder();
+        try {
+            if (jdbcTemplate.update(con -> Objects.requireNonNull(bidding.insert(con)), keyHolder) != 1) {
+                return 0L;
+            } else {
+                return Objects.requireNonNull(keyHolder.getKey()).longValue();
+            }
+        } catch (Exception e) {
+            log.error("{}", e.getMessage());
+            return 0L;
+        }
+    }
+
+    public List<AuctionBid> findBiddingByAuctionId(Long auctionId) {
+        String sql = "SELECT * FROM %s WHERE auction_id = ?".formatted(AuctionBid.TABLE_NAME);
+        return jdbcTemplate.query(sql, new Object[]{auctionId}, (rs, rowNum) -> new AuctionBid(
+                rs.getLong("id"),
+                rs.getLong("auction_id"),
+                rs.getInt("bid"),
+                rs.getLong("bidder"),
+                rs.getTimestamp("created_at").toInstant().atOffset(ZoneOffset.UTC)
+        ));
+    }
+
 }

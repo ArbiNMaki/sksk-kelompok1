@@ -1,18 +1,24 @@
 package jawa.sinaukoding.sk.service;
 
 import jawa.sinaukoding.sk.entity.Auction;
+import jawa.sinaukoding.sk.entity.AuctionBid;
 import jawa.sinaukoding.sk.entity.User;
 import jawa.sinaukoding.sk.model.Authentication;
+import jawa.sinaukoding.sk.model.request.BuyerCreateBiddingReq;
 import jawa.sinaukoding.sk.model.request.SellerCreateAuctionReq;
 import jawa.sinaukoding.sk.model.Response;
 import jawa.sinaukoding.sk.model.request.UpdateStatusReq;
 import jawa.sinaukoding.sk.model.response.AuctionDto;
+import jawa.sinaukoding.sk.model.response.BiddingDto;
+import jawa.sinaukoding.sk.model.response.ListAuctionWithBiddingDto;
 import jawa.sinaukoding.sk.repository.AuctionRepository;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -81,34 +87,46 @@ public final class AuctionService extends AbstractService {
 
     public Response<Object> getAuctionById(final Authentication authentication, final Long id) {
         return precondition(authentication, User.Role.ADMIN, User.Role.SELLER, User.Role.BUYER).orElseGet(() -> {
-            List<Auction> auction = auctionRepository.findById(id);
+            List<Auction> auctions = auctionRepository.findById(id);
 
-            if (auction == null) {
-                return Response.create("09","01", "Auction not found", null);
+            if (auctions.isEmpty()) {
+                return Response.create("09", "01", "Auction not found", null);
             }
 
-//            final List<Auction> auctions = auctionRepository.findById(id);
-            final List<AuctionDto> dto = auction.stream()
-                    .map(auctionList -> new AuctionDto(
-                            auctionList.id(),
-                            auctionList.code(),
-                            auctionList.name(),
-                            auctionList.description(),
-                            auctionList.offer(),
-                            auctionList.startedAt().toString(),
-                            auctionList.endedAt().toString(),
-                            auctionList.status().toString())).toList();
+            Auction auction = auctions.get(0);
+            List<AuctionBid> biddings = auctionRepository.findBiddingByAuctionId(auction.id());
 
-            return Response.create("09", "00", "Sukses", dto);
+            AuctionDto auctionDto = new AuctionDto(
+                    auction.id(),
+                    auction.code(),
+                    auction.name(),
+                    auction.description(),
+                    auction.offer(),
+                    auction.startedAt().toString(),
+                    auction.endedAt().toString(),
+                    auction.status().toString()
+            );
+
+            List<BiddingDto> biddingDto = biddings.stream()
+                    .map(bid -> new BiddingDto(
+                            bid.id(),
+                            bid.auctionId(),
+                            bid.bid(),
+                            bid.bidder(),
+                            bid.createdAt().toString()
+                    )).toList();
+
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("auction", auctionDto);
+            responseData.put("bidding", biddingDto);
+
+            return Response.create("09", "00", "Sukses", responseData);
         });
     }
 
     public Response<Object> updateAuctionStatus(Authentication authentication, UpdateStatusReq req) {
         return precondition(authentication, User.Role.ADMIN).orElseGet(() -> {
             Auction.Status newStatus = req.status();
-            if (newStatus != Auction.Status.APPROVED && newStatus != Auction.Status.REJECTED) {
-                return Response.badRequest();
-            }
 
             List<Auction> auctions = auctionRepository.findById(req.id());
             if (auctions.isEmpty()) {
@@ -116,6 +134,11 @@ public final class AuctionService extends AbstractService {
             }
 
             Auction auction = auctions.get(0);
+
+            if (auction.status() == Auction.Status.APPROVED || auction.status() == Auction.Status.REJECTED) {
+                return Response.create("07", "03", "Status auction sudah DIUBAH dan tidak bisa diubah lagi", null);
+            }
+
             Auction updatedAuction = new Auction(
                     auction.id(),
                     auction.code(),
@@ -141,7 +164,81 @@ public final class AuctionService extends AbstractService {
             if (updated == 1L) {
                 return Response.create("07", "00", "Sukses", updated);
             } else {
-                return Response.create("07", "01", "Gagal reset password", null);
+                return Response.create("07", "01", "Gagal update Status", null);
+            }
+        });
+    }
+
+    public Response<Object> closeAuctionStatus(Authentication authentication, UpdateStatusReq req) {
+        return precondition(authentication, User.Role.ADMIN, User.Role.SELLER).orElseGet(() -> {
+            Auction.Status newStatus = req.status();
+
+            List<Auction> auctions = auctionRepository.findById(req.id());
+            if (auctions.isEmpty()) {
+                return Response.create("07", "02", "Auction tidak ditemukan", null);
+            }
+
+            Auction auction = auctions.get(0);
+
+            if (auction.status() == Auction.Status.CLOSED) {
+                return Response.create("07", "03", "Status auction sudah CLOSED dan tidak bisa diubah lagi", null);
+            }
+
+            Auction updatedAuction = new Auction(
+                    auction.id(),
+                    auction.code(),
+                    auction.name(),
+                    auction.description(),
+                    auction.offer(),
+                    auction.highestBid(),
+                    auction.highestBidderId(),
+                    auction.highestBidderName(),
+                    newStatus,
+                    auction.startedAt(),
+                    auction.endedAt(),
+                    auction.createdBy(),
+                    auction.updatedBy(),
+                    auction.deletedBy(),
+                    auction.createdAt(),
+                    OffsetDateTime.now(),
+                    auction.deletedAt()
+            );
+
+            long updated = auctionRepository.closeAuctionStatus(updatedAuction);
+
+            if (updated == 1L) {
+                return Response.create("07", "00", "Sukses", updated);
+            } else {
+                return Response.create("07", "01", "Gagal Close Status", null);
+            }
+        });
+    }
+
+    public Response<Object> createBidding(final Authentication authentication, final BuyerCreateBiddingReq req, final Long id) {
+        return precondition(authentication, User.Role.BUYER).orElseGet(() -> {
+            if (req == null) {
+                return Response.badRequest();
+            }
+
+            List<Auction> bidingId = auctionRepository.findById(id);
+            if (bidingId.isEmpty()) {
+                return Response.create("05", "01", "Auction not found.", null);
+            }
+
+            final AuctionBid bid = new AuctionBid(
+                    null,
+                    id,
+                    req.bid(),
+                    req.bidder(),
+                    OffsetDateTime.now()
+            );
+
+            final Long saved = auctionRepository.saveBidding(bid);
+
+            if (saved == 0L) {
+                return Response.create("05", "01", "Gagal membuat bidding.", null);
+            } else {
+                return Response.create("05", "00", "Sukses membuat bidding.", saved);
             }
         });
     }
