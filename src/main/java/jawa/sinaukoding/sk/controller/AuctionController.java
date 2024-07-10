@@ -24,6 +24,12 @@ public class AuctionController  {
         return auctionService.createAuction(authentication, req);
     }
 
+    @PutMapping("/close")
+    public Response<Object> closeAuction(@RequestBody UpdateStatusReq req) {
+        Authentication authentication = SecurityContextHolder.getAuthentication();
+        return auctionService.closeAuctionStatus(authentication, req);
+    }
+
     @GetMapping("/list")
     public Response<Object> listUser(@RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value = "size", defaultValue = "2") int size) {
         Authentication authentication = SecurityContextHolder.getAuthentication();

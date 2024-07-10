@@ -106,9 +106,6 @@ public final class AuctionService extends AbstractService {
     public Response<Object> updateAuctionStatus(Authentication authentication, UpdateStatusReq req) {
         return precondition(authentication, User.Role.ADMIN).orElseGet(() -> {
             Auction.Status newStatus = req.status();
-            if (newStatus != Auction.Status.APPROVED && newStatus != Auction.Status.REJECTED) {
-                return Response.badRequest();
-            }
 
             List<Auction> auctions = auctionRepository.findById(req.id());
             if (auctions.isEmpty()) {
@@ -116,6 +113,11 @@ public final class AuctionService extends AbstractService {
             }
 
             Auction auction = auctions.get(0);
+
+            if (auction.status() == Auction.Status.APPROVED || auction.status() == Auction.Status.REJECTED) {
+                return Response.create("07", "03", "Status auction sudah DIUBAH dan tidak bisa diubah lagi", null);
+            }
+
             Auction updatedAuction = new Auction(
                     auction.id(),
                     auction.code(),
@@ -137,6 +139,51 @@ public final class AuctionService extends AbstractService {
             );
 
             long updated = auctionRepository.updateAuctionStatus(updatedAuction);
+
+            if (updated == 1L) {
+                return Response.create("07", "00", "Sukses", updated);
+            } else {
+                return Response.create("07", "01", "Gagal update Status", null);
+            }
+        });
+    }
+
+    public Response<Object> closeAuctionStatus(Authentication authentication, UpdateStatusReq req) {
+        return precondition(authentication, User.Role.ADMIN, User.Role.SELLER).orElseGet(() -> {
+            Auction.Status newStatus = req.status();
+
+            List<Auction> auctions = auctionRepository.findById(req.id());
+            if (auctions.isEmpty()) {
+                return Response.create("07", "02", "Auction tidak ditemukan", null);
+            }
+
+            Auction auction = auctions.get(0);
+
+            if (auction.status() == Auction.Status.CLOSED) {
+                return Response.create("07", "03", "Status auction sudah CLOSED dan tidak bisa diubah lagi", null);
+            }
+
+            Auction updatedAuction = new Auction(
+                    auction.id(),
+                    auction.code(),
+                    auction.name(),
+                    auction.description(),
+                    auction.offer(),
+                    auction.highestBid(),
+                    auction.highestBidderId(),
+                    auction.highestBidderName(),
+                    newStatus,
+                    auction.startedAt(),
+                    auction.endedAt(),
+                    auction.createdBy(),
+                    auction.updatedBy(),
+                    auction.deletedBy(),
+                    auction.createdAt(),
+                    OffsetDateTime.now(),
+                    auction.deletedAt()
+            );
+
+            long updated = auctionRepository.closeAuctionStatus(updatedAuction);
 
             if (updated == 1L) {
                 return Response.create("07", "00", "Sukses", updated);

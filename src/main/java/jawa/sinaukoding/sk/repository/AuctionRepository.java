@@ -93,4 +93,14 @@ public class AuctionRepository {
             return 0L;
         }
     }
+
+    public long closeAuctionStatus(Auction auction) {
+        String sql = "UPDATE %s SET status = ? WHERE id = ?".formatted(Auction.TABLE_NAME);
+        try {
+            return jdbcTemplate.update(sql, auction.status().toString(), auction.id());
+        } catch (Exception e) {
+            log.error("Failed to close auction status: {}", e.getMessage());
+            return 0L;
+        }
+    }
 }
