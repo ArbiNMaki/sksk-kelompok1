@@ -57,9 +57,9 @@ public class UserController {
     }
 
     @GetMapping("/current")
-    public Response<Object> getCurrentUser() {
+    public Response<Object> currentUser() {
         Authentication authentication = SecurityContextHolder.getAuthentication();
-        return userService.getCurrentUser(authentication);
+        return userService.currentUser(authentication);
     }
 
 }

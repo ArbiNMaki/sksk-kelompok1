@@ -174,7 +174,7 @@ public final class UserService extends AbstractService {
         });
     }
 
-    public Response<Object> getCurrentUser(final Authentication authentication) {
+    public Response<Object> currentUser(final Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return Response.unauthorized();
         }
