@@ -238,9 +238,16 @@ public final class AuctionService extends AbstractService {
                 return Response.badRequest();
             }
 
-            List<Auction> bidingId = auctionRepository.findById(id);
-            if (bidingId.isEmpty()) {
+            List<Auction> auctions = auctionRepository.findById(id);
+            if (auctions.isEmpty()) {
                 return Response.create("05", "01", "Auction tidak ditemukan.", null);
+            }
+
+            Auction auction = auctions.get(0);
+
+            if (auction.status() == Auction.Status.WAITING_FOR_APPROVAL || auction.status() == Auction.Status.CLOSED) {
+                String message = "Tidak bisa melakukan bidding karena status auction (" + auction.status() + ")";
+                return Response.create("07", "03", message, null);
             }
 
             final AuctionBid bid = new AuctionBid(
