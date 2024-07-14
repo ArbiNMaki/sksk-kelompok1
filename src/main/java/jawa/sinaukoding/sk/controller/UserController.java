@@ -55,4 +55,11 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getAuthentication();
         return userService.deleteUser(authentication, req);
     }
+
+    @GetMapping("/current")
+    public Response<Object> getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getAuthentication();
+        return userService.getCurrentUser(authentication);
+    }
+
 }

@@ -4,6 +4,7 @@ import jawa.sinaukoding.sk.entity.User;
 import jawa.sinaukoding.sk.model.Authentication;
 import jawa.sinaukoding.sk.model.request.*;
 import jawa.sinaukoding.sk.model.Response;
+import jawa.sinaukoding.sk.model.response.UserCurrentDto;
 import jawa.sinaukoding.sk.model.response.UserDto;
 import jawa.sinaukoding.sk.repository.UserRepository;
 import jawa.sinaukoding.sk.util.HexUtils;
@@ -171,6 +172,23 @@ public final class UserService extends AbstractService {
 
             return Response.create("07", "00", "Sukses", result);
         });
+    }
+
+    public Response<Object> getCurrentUser(final Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return Response.unauthorized();
+        }
+
+        final Optional<User> userOpt = userRepository.findById(authentication.id());
+
+        if (userOpt.isEmpty()) {
+            return Response.badRequest();
+        }
+
+        final User user = userOpt.get();
+        final UserCurrentDto userDto = new UserCurrentDto(user.name(), user.email(), user.role().name());
+
+        return Response.create("11", "00", "Success", userDto);
     }
 
 }
