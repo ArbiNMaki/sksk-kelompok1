@@ -76,6 +76,11 @@ public final class AuctionService extends AbstractService {
             }
 
             final List<Auction> auctions = auctionRepository.listAuction(page, size, name);
+
+            if (auctions.isEmpty()) {
+                return Response.create("09", "01", "Auction tidak ada", null);
+            }
+
             final List<AuctionDto> dto = auctions.stream()
                     .map(auction -> new AuctionDto(
                             auction.id(),
