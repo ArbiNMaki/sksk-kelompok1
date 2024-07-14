@@ -90,6 +90,9 @@ public final class AuctionService extends AbstractService {
                             auction.offer(),
                             auction.startedAt().toString(),
                             auction.endedAt().toString(),
+                            auction.highestBid(),
+                            auction.highestBidderId(),
+                            auction.highestBidderName(),
                             auction.status().toString()
                     )).toList();
 
@@ -116,6 +119,9 @@ public final class AuctionService extends AbstractService {
                     auction.offer(),
                     auction.startedAt().toString(),
                     auction.endedAt().toString(),
+                    auction.highestBid(),
+                    auction.highestBidderId(),
+                    auction.highestBidderName(),
                     auction.status().toString()
             );
 
