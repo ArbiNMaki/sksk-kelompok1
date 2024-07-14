@@ -69,13 +69,13 @@ public final class AuctionService extends AbstractService {
         });
     }
 
-    public Response<Object> listAuction(final Authentication authentication, final int page, final int size) {
+    public Response<Object> listAuction(final Authentication authentication, final int page, final int size, final String name) {
         return precondition(authentication, User.Role.ADMIN, User.Role.SELLER, User.Role.BUYER).orElseGet(() -> {
             if (page <= 0 || size <= 0) {
                 return Response.badRequest();
             }
 
-            final List<Auction> auctions = auctionRepository.listAuction(page, size);
+            final List<Auction> auctions = auctionRepository.listAuction(page, size, name);
             final List<AuctionDto> dto = auctions.stream()
                     .map(auction -> new AuctionDto(
                             auction.id(),
@@ -85,7 +85,8 @@ public final class AuctionService extends AbstractService {
                             auction.offer(),
                             auction.startedAt().toString(),
                             auction.endedAt().toString(),
-                            auction.status().toString())).toList();
+                            auction.status().toString()
+                    )).toList();
 
             return Response.create("09", "00", "Sukses", dto);
         });
