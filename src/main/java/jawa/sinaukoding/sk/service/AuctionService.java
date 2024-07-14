@@ -14,6 +14,7 @@ import jawa.sinaukoding.sk.repository.AuctionRepository;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +43,12 @@ public final class AuctionService extends AbstractService {
             OffsetDateTime startedAt = OffsetDateTime.parse(req.startedAt());
             OffsetDateTime endedAt = OffsetDateTime.parse(req.endedAt());
 
+            long durationInMinutes = Duration.between(startedAt, endedAt).toMinutes();
+
+            if (durationInMinutes > 1440) {
+                return Response.create("05", "02", "Tidak boleh melebihi dari 24 jam", null);
+            }
+
             Auction newAuction = new Auction(
                     generateCode(),
                     req.name(),
@@ -52,7 +59,7 @@ public final class AuctionService extends AbstractService {
                     authentication.id()
             );
 
-            final Long saved = auctionRepository.saveAuction(newAuction);
+            final long saved = auctionRepository.saveAuction(newAuction);
 
             if (saved == 0L) {
                 return Response.create("05", "01", "Gagal membuat lelang.", null);
