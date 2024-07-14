@@ -10,7 +10,6 @@ import jawa.sinaukoding.sk.model.Response;
 import jawa.sinaukoding.sk.model.request.UpdateStatusReq;
 import jawa.sinaukoding.sk.model.response.AuctionDto;
 import jawa.sinaukoding.sk.model.response.BiddingDto;
-import jawa.sinaukoding.sk.model.response.ListAuctionWithBiddingDto;
 import jawa.sinaukoding.sk.repository.AuctionRepository;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -222,7 +221,7 @@ public final class AuctionService extends AbstractService {
 
             List<Auction> bidingId = auctionRepository.findById(id);
             if (bidingId.isEmpty()) {
-                return Response.create("05", "01", "Auction not found.", null);
+                return Response.create("05", "01", "Auction tidak ditemukan.", null);
             }
 
             final AuctionBid bid = new AuctionBid(
