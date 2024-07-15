@@ -228,6 +228,126 @@ class AuctionServiceTest {
     }
 
     // Update Status By ID
+    @Test
+    void updateAuctionStatusApproved() {
+        final User admin = userRepository.findById(1L).orElseThrow();
+        final OffsetDateTime startedAt = OffsetDateTime.parse("2024-07-15T18:00:00Z");
+        final OffsetDateTime endedAt = OffsetDateTime.parse("2024-07-15T22:00:00Z");
+
+        final Auction auction = new Auction(
+                1L,
+                "A1",
+                "Auction1",
+                "Description1",
+                100,
+                150,
+                2L,
+                "Bidder1",
+                Auction.Status.WAITING_FOR_APPROVAL,
+                startedAt,
+                endedAt,
+                admin.id(),
+                null,
+                null,
+                startedAt,
+                null,
+                null
+        );
+
+        Mockito.when(auctionRepository.findById(1L)).thenReturn(List.of(auction));
+        Mockito.when(auctionRepository.updateAuctionStatus(Mockito.any(Auction.class))).thenReturn(1L);
+
+        final Authentication authentication = new Authentication(admin.id(), admin.role(), true);
+        final UpdateStatusReq req = new UpdateStatusReq(1L, Auction.Status.APPROVED);
+        final Response<Object> response = auctionService.updateAuctionStatus(authentication, req);
+
+        System.out.println(response);
+
+        Assertions.assertEquals("0700", response.code());
+        Assertions.assertEquals("Sukses", response.message());
+        Assertions.assertNotNull(response.data());
+        Assertions.assertEquals(1L, response.data());
+    }
+
+    @Test
+    void updateAuctionStatusRejected() {
+        final User admin = userRepository.findById(1L).orElseThrow();
+        final OffsetDateTime startedAt = OffsetDateTime.parse("2024-07-15T18:00:00Z");
+        final OffsetDateTime endedAt = OffsetDateTime.parse("2024-07-15T22:00:00Z");
+
+        final Auction auction = new Auction(
+                1L,
+                "A1",
+                "Auction1",
+                "Description1",
+                100,
+                150,
+                2L,
+                "Bidder1",
+                Auction.Status.WAITING_FOR_APPROVAL,
+                startedAt,
+                endedAt,
+                admin.id(),
+                null,
+                null,
+                startedAt,
+                null,
+                null
+        );
+
+        Mockito.when(auctionRepository.findById(1L)).thenReturn(List.of(auction));
+        Mockito.when(auctionRepository.updateAuctionStatus(Mockito.any(Auction.class))).thenReturn(1L);
+
+        final Authentication authentication = new Authentication(admin.id(), admin.role(), true);
+        final UpdateStatusReq req = new UpdateStatusReq(1L, Auction.Status.REJECTED);
+        final Response<Object> response = auctionService.updateAuctionStatus(authentication, req);
+
+        System.out.println(response);
+
+        Assertions.assertEquals("0700", response.code());
+        Assertions.assertEquals("Sukses", response.message());
+        Assertions.assertNotNull(response.data());
+        Assertions.assertEquals(1L, response.data());
+    }
+
+    @Test
+    void updateAuctionStatusAlreadyUpdated() {
+        final User admin = userRepository.findById(1L).orElseThrow();
+        final OffsetDateTime startedAt = OffsetDateTime.parse("2024-07-15T18:00:00Z");
+        final OffsetDateTime endedAt = OffsetDateTime.parse("2024-07-15T22:00:00Z");
+
+        final Auction auction = new Auction(
+                1L,
+                "A1",
+                "Auction1",
+                "Description1",
+                100,
+                150,
+                2L,
+                "Bidder1",
+                Auction.Status.APPROVED,
+                startedAt,
+                endedAt,
+                admin.id(),
+                null,
+                null,
+                startedAt,
+                null,
+                null
+        );
+
+        Mockito.when(auctionRepository.findById(1L)).thenReturn(List.of(auction));
+
+        final Authentication authentication = new Authentication(admin.id(), admin.role(), true);
+        final UpdateStatusReq req = new UpdateStatusReq(1L, Auction.Status.REJECTED);
+        final Response<Object> response = auctionService.updateAuctionStatus(authentication, req);
+
+        System.out.println(response);
+
+        Assertions.assertEquals("0703", response.code());
+        Assertions.assertEquals("Status auction sudah DIUBAH dan tidak bisa diubah lagi", response.message());
+        Assertions.assertNull(response.data());
+    }
 
     @Test
     void closeAuctionStatus() {
