@@ -267,13 +267,13 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjIzLCJyb2xlIjoiU0VMTEVSIiwiaWF0IjoxNzIwOTk5NjIzODE4LCJleHAiOjM2MDAwMDB9.xHeb-WFf9TS6I2k2RfD7trUYwsQbb8gztMd4fWvAZlg",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjIzLCJyb2xlIjoiU0VMTEVSIiwiaWF0IjoxNzIxMDE4Mjg2MjE2LCJleHAiOjM2MDAwMDB9.q2DmWc9_WD6QfqAzSpqTsVw7porRojOBNQGFuR-Um-U",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"name\": \"COBA LELANG TANAH 10 HEKTAR\",\r\n  \"description\": \"Lelang TANAH 10 HEKTAR\",\r\n  \"minimumPrice\": 100,\r\n  \"startedAt\": \"2024-07-15T18:00:00+07:00\",\r\n  \"endedAt\": \"2024-07-16T18:00:00+07:00\"\r\n}\r\n",
+					"raw": "{\r\n  \"name\": \"COBA LELANG TANAH 11 HEKTAR\",\r\n  \"description\": \"Lelang TANAH 11 HEKTAR\",\r\n  \"minimumPrice\": 100,\r\n  \"startedAt\": \"2024-07-15T12:00:00+07:00\",\r\n  \"endedAt\": \"2024-07-16T12:00:00+07:00\"\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -345,7 +345,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjIzLCJyb2xlIjoiU0VMTEVSIiwiaWF0IjoxNzIxMDA4MTQ2ODQzLCJleHAiOjM2MDAwMDB9.tVZhtNuU9HhXDCiClFcyV60qOhgwiV-NeGhd9Tma5Kk",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjIzLCJyb2xlIjoiU0VMTEVSIiwiaWF0IjoxNzIxMDE3MjY0MjUyLCJleHAiOjM2MDAwMDB9.ksBJJtCkDWrLHhcfKVUBjNWrJxu4RrOJfVh8_A4cB7A",
 						"type": "text"
 					}
 				],
@@ -454,13 +454,13 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjI0LCJyb2xlIjoiQlVZRVIiLCJpYXQiOjE3MjEwMDgzOTUyMjIsImV4cCI6MzYwMDAwMH0.Y2LPEZkiL0jqTX-ea8cFLXmT_NSKcZdwyVGR2LNRWaw",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjI0LCJyb2xlIjoiQlVZRVIiLCJpYXQiOjE3MjEwMTczMTg1OTYsImV4cCI6MzYwMDAwMH0.LlCfV85GNeWVi50rM2bblcQ3FSd0cPFdkt5tyxV73UY",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"bid\" : 51000,\r\n  \"bidder\" : 20\r\n}\r\n",
+					"raw": "{\r\n  \"bid\" : 10001,\r\n  \"bidder\" : 20\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
