@@ -43,11 +43,16 @@ public final class AuctionService extends AbstractService {
 
             OffsetDateTime startedAt = OffsetDateTime.parse(req.startedAt());
             OffsetDateTime endedAt = OffsetDateTime.parse(req.endedAt());
+            OffsetDateTime now = OffsetDateTime.now();
 
             long durationInMinutes = Duration.between(startedAt, endedAt).toMinutes();
 
             if (durationInMinutes > 1440) {
                 return Response.create("05", "02", "Tidak boleh melebihi dari 24 jam", null);
+            }
+
+            if (startedAt.isBefore(now)) {
+                return Response.create("05", "02", "Tidak bisa membuat auction dengan waktu mulai di masa lalu", null);
             }
 
             Auction newAuction = new Auction(
