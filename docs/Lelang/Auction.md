@@ -1,238 +1,118 @@
 # AUCTION API Spec
 
-## CREATE AUCTION
+### 1. Register Seller
 
-Endpoint : POST /api/users
+POST http://127.0.0.1:8080/secured/user/register-seller
 
-Request Body :
+Request Headers
+
+Authorization
+```json lines
+Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInJvbGUiOiJBRE1JTiIsImlhdCI6MTcyMDkzMjAzMDMyNiwiZXhwIjoxNzIwOTM1NjMwMzI2fQ.-XFb75wOdUcTEKVixl2YXqanxuLe0SX_wqEGnm07FrE
+```
+
+Body
 
 ```json
 {
-  "username" : "wijaya",
-  "password" : "secret",
-  "name" : "Arbi Dwi Wijaya"
+    "name":"penjualbaru",
+    "email":"penjualbaru@sksk.id",
+    "password":"sellerpassword"
 }
 ```
 
-Response Body (Success) :
+### 2. Create Auction
+
+POST http://127.0.0.1:8080/secured/auction/create
+
+Request Headers
+
+Authorization
+```json lines
+Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInJvbGUiOiJBRE1JTiIsImlhdCI6MTcyMDkzMjAzMDMyNiwiZXhwIjoxNzIwOTM1NjMwMzI2fQ.-XFb75wOdUcTEKVixl2YXqanxuLe0SX_wqEGnm07FrE
+```
+
+Body
 
 ```json
 {
-  "data" : "Ok"
+  "name": "COBA LELANG TANAH 1 HEKTAR",
+  "description": "Lelang TANAH 1 HEKTAR",
+  "minimumPrice": 1000,
+  "startedAt": "2024-07-15T12:00:00+07:00",
+  "endedAt": "2024-07-16T12:00:00+07:00"
 }
 ```
 
-Response Body (Failed) :
+### 3. List Auction
+
+GET http://127.0.0.1:8080/secured/auction/list
+
+Request Headers
+
+Authorization
+```json lines
+Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInJvbGUiOiJBRE1JTiIsImlhdCI6MTcyMDkzMjAzMDMyNiwiZXhwIjoxNzIwOTM1NjMwMzI2fQ.-XFb75wOdUcTEKVixl2YXqanxuLe0SX_wqEGnm07FrE
+```
+
+Query Params (page = 1, size = 10, name = kulkas)
+
+### 4. List Auction By ID
+
+GET http://127.0.0.1:8080/secured/auction/list/12
+
+Request Headers
+
+Authorization
+```json lines
+Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInJvbGUiOiJBRE1JTiIsImlhdCI6MTcyMDkzMjAzMDMyNiwiZXhwIjoxNzIwOTM1NjMwMzI2fQ.-XFb75wOdUcTEKVixl2YXqanxuLe0SX_wqEGnm07FrE
+```
+
+### 5. Update Status Auction (ONLY ADMIN)
+
+PUT http://127.0.0.1:8080/secured/auction/status
+
+Request Headers
+
+Authorization
+```json lines
+Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInJvbGUiOiJBRE1JTiIsImlhdCI6MTcyMDkzMjAzMDMyNiwiZXhwIjoxNzIwOTM1NjMwMzI2fQ.-XFb75wOdUcTEKVixl2YXqanxuLe0SX_wqEGnm07FrE
+```
+
+Body (IF APPROVED)
 
 ```json
 {
-  "errors" : "Username must not blank!"
+    "id": 12,
+    "status": "APPROVED"
 }
 ```
 
-## UPDATE AUCTION
-
-Endpoint : POST /api/auth/login
-
-Request Body :
+Body (IF REJECTED)
 
 ```json
 {
-  "username" : "wijaya",
-  "password" : "secret"
+    "id": 12,
+    "status": "REJECTED"
 }
 ```
 
-Response Body (Success) :
+### 6. Update Status Auction Close (SELLER & ADMIN)
 
-```json
-{
-  "data" : {
-    "token" : "TOKEN",
-    "expiredAt" : 1122334455
-  }
-}
+PUT http://127.0.0.1:8080/secured/auction/close
+
+Request Headers
+
+Authorization
+```json lines
+Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInJvbGUiOiJBRE1JTiIsImlhdCI6MTcyMDkzMjAzMDMyNiwiZXhwIjoxNzIwOTM1NjMwMzI2fQ.-XFb75wOdUcTEKVixl2YXqanxuLe0SX_wqEGnm07FrE
 ```
 
-Response Body (Failed, 401) :
+Body
 
 ```json
 {
-  "errors" : "Username or Password Wrong!"
-}
-```
-
-## UPDATE STATUS AUCTION
-
-Endpoint : GET /api/users/current
-
-Request Header :
-
-- X-API-TOKEN : Token (Mandatory)
-
-Response Body (Success) :
-
-```json
-{
-  "data" : {
-    "username" : "wijaya",
-    "name" : "Arbi Dwi Wijaya"
-  }
-}
-```
-
-Response Body (Failed, 401) :
-
-```json
-{
-  "errors" : "Unauthorized"
-}
-```
-
-## CLOSED AUCTION MANUAL
-
-Endpoint : PATCH /api/users/current
-
-Request Header :
-
-- X-API-TOKEN : Token (Mandatory)
-
-Request Body :
-
-```json
-{
-  "name" : "Nishikino Maki",
-  "password" : "passwordbaru"
-}
-```
-
-Response Body (Success) :
-
-```json
-{
-  "data" : {
-    "username" : "wijaya",
-    "name" : "Nishikino Maki"
-  }
-}
-```
-
-Response Body (Failed) :
-
-```json
-{
-  "data" : "Failed",
-  "errors" : "Username must not blank!"
-}
-```
-
-## CLOSED AUCTION BY TIME
-
-Endpoint : PATCH /api/users/current
-
-Request Header :
-
-- X-API-TOKEN : Token (Mandatory)
-
-Request Body :
-
-```json
-{
-  "name" : "Nishikino Maki",
-  "password" : "passwordbaru"
-}
-```
-
-Response Body (Success) :
-
-```json
-{
-  "data" : {
-    "username" : "wijaya",
-    "name" : "Nishikino Maki"
-  }
-}
-```
-
-Response Body (Failed) :
-
-```json
-{
-  "data" : "Failed",
-  "errors" : "Username must not blank!"
-}
-```
-
-## DELETE AUCTION MANUAL
-
-Endpoint : PATCH /api/users/current
-
-Request Header :
-
-- X-API-TOKEN : Token (Mandatory)
-
-Request Body :
-
-```json
-{
-  "name" : "Nishikino Maki",
-  "password" : "passwordbaru"
-}
-```
-
-Response Body (Success) :
-
-```json
-{
-  "data" : {
-    "username" : "wijaya",
-    "name" : "Nishikino Maki"
-  }
-}
-```
-
-Response Body (Failed) :
-
-```json
-{
-  "data" : "Failed",
-  "errors" : "Username must not blank!"
-}
-```
-
-## DELETE AUCTION BY TIME
-
-Endpoint : PATCH /api/users/current
-
-Request Header :
-
-- X-API-TOKEN : Token (Mandatory)
-
-Request Body :
-
-```json
-{
-  "name" : "Nishikino Maki",
-  "password" : "passwordbaru"
-}
-```
-
-Response Body (Success) :
-
-```json
-{
-  "data" : {
-    "username" : "wijaya",
-    "name" : "Nishikino Maki"
-  }
-}
-```
-
-Response Body (Failed) :
-
-```json
-{
-  "data" : "Failed",
-  "errors" : "Username must not blank!"
+    "id": 12,
+    "status": "CLOSED"
 }
 ```
