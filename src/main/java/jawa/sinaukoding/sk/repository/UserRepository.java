@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -164,5 +165,54 @@ public class UserRepository {
             log.error("Error deleting user: {}", e.getMessage());
             return false;
         }
+    }
+
+    public long updateProfile(User user) {
+        String idStr = Long.toString(user.id());
+        ArrayList<String> listValue = new ArrayList<>();
+
+        if (user.id() == 0) {
+            return 0L;
+        }
+
+        StringBuilder qry = new StringBuilder();
+        qry.append(" UPDATE " + User.TABLE_NAME + " SET ");
+
+        if (user.name() != "") {
+            qry.append( "name=?");
+            listValue.add(user.name());
+        }
+
+        if (user.email() != ""){
+            if(listValue.size() >= 1){
+                qry.append( ", email=?");
+            }else{
+                qry.append( "email=?");
+            }
+            listValue.add(user.email());
+        }
+
+        if(listValue.size() == 0){
+            return 0L;
+        }
+
+        qry.append( ",updated_by=?, updated_at=CURRENT_TIMESTAMP WHERE id=?");
+        listValue.add(idStr);
+        listValue.add(idStr);
+
+        if(jdbcTemplate.update(con -> {
+            final PreparedStatement ps = con.prepareStatement(qry.toString());
+
+            for(int x=0; x<listValue.size(); x++){
+                ps.setString(x+1, listValue.get(x));
+            }
+
+            return ps;
+        }) > 0){
+            return user.id();
+        }else{
+            return 0L;
+        }
+
     }
 }

@@ -53,10 +53,6 @@ public record Auction(Long id, //
         this(null, code, name, description, offer, 0, 0L, "", Status.WAITING_FOR_APPROVAL, startedAt, endedAt, createdBy, null, null, OffsetDateTime.now(), null, null);
     }
 
-    public Auction updateStatus(Status status, Long updatedBy) {
-        return new Auction(id(), code(), name(), description(), offer(), highestBid(), highestBidderId(), highestBidderName(), status, startedAt(), endedAt(), createdBy(), updatedBy, deletedBy(), createdAt(), OffsetDateTime.now(), deletedAt());
-    }
-
     public enum Status {
         WAITING_FOR_APPROVAL, APPROVED, REJECTED, CLOSED
     }

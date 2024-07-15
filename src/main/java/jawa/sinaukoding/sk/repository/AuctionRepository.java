@@ -10,6 +10,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -38,10 +39,21 @@ public class AuctionRepository {
         }
     }
 
-    public List<Auction> listAuction(int page, int size) {
+    public List<Auction> listAuction(int page, int size, String name) {
         final int offset = (page - 1) * size;
-        final String sql = "SELECT * FROM %s LIMIT ? OFFSET ?".formatted(Auction.TABLE_NAME);
-        return jdbcTemplate.query(sql, new Object[]{size, offset}, (rs, rowNum) -> new Auction(
+        String sql = "SELECT * FROM %s".formatted(Auction.TABLE_NAME);
+        List<Object> params = new ArrayList<>();
+
+        if (name != null && !name.isEmpty()) {
+            sql += " WHERE name LIKE ?";
+            params.add("%" + name + "%");
+        }
+
+        sql += " LIMIT ? OFFSET ?";
+        params.add(size);
+        params.add(offset);
+
+        return jdbcTemplate.query(sql, params.toArray(), (rs, rowNum) -> new Auction(
                 rs.getLong("id"),
                 rs.getString("code"),
                 rs.getString("name"),
@@ -116,6 +128,15 @@ public class AuctionRepository {
         } catch (Exception e) {
             log.error("{}", e.getMessage());
             return 0L;
+        }
+    }
+
+    public void updateHighestBid(Long auctionId, Integer highestBid, Long highestBidderId, String highestBidderName) {
+        String sql = "UPDATE %s SET highest_bid = ?, highest_bidder_id = ?, hignest_bidder_name = ? WHERE id = ?".formatted(Auction.TABLE_NAME);
+        try {
+            jdbcTemplate.update(sql, highestBid, highestBidderId, highestBidderName, auctionId);
+        } catch (Exception e) {
+            log.error("Failed to update highest bid: {}", e.getMessage());
         }
     }
 

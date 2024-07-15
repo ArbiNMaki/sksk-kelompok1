@@ -32,9 +32,11 @@ public class AuctionController  {
     }
 
     @GetMapping("/list")
-    public Response<Object> listUser(@RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value = "size", defaultValue = "2") int size) {
+    public Response<Object> listUser(@RequestParam(value = "page", defaultValue = "1") int page,
+                                     @RequestParam(value = "size", defaultValue = "2") int size,
+                                     @RequestParam(value = "name", required = false) String name) {
         Authentication authentication = SecurityContextHolder.getAuthentication();
-        return auctionService.listAuction(authentication, page, size);
+        return auctionService.listAuction(authentication, page, size, name);
     }
 
     @GetMapping("/list/{id}")
