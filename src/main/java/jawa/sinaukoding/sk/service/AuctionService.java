@@ -246,6 +246,10 @@ public final class AuctionService extends AbstractService {
 
             Auction auction = auctions.get(0);
 
+            if (req.bid() <= auction.offer()) {
+                return Response.create("07", "04", "Tidak bisa melakukan bidding karena bid lebih kecil daripada offer.", null);
+            }
+
             final Optional<User> userOpt = userRepository.findById(authentication.id());
             final User user = userOpt.get();
 
