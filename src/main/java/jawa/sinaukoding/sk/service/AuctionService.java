@@ -11,23 +11,24 @@ import jawa.sinaukoding.sk.model.request.UpdateStatusReq;
 import jawa.sinaukoding.sk.model.response.AuctionDto;
 import jawa.sinaukoding.sk.model.response.BiddingDto;
 import jawa.sinaukoding.sk.repository.AuctionRepository;
+import jawa.sinaukoding.sk.repository.UserRepository;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public final class AuctionService extends AbstractService {
 
     private final AuctionRepository auctionRepository;
+    private final UserRepository userRepository;
 
-    public AuctionService(final Environment env, final AuctionRepository auctionRepository) {
+
+    public AuctionService(final Environment env, final AuctionRepository auctionRepository, UserRepository userRepository) {
         this.auctionRepository = auctionRepository;
+        this.userRepository = userRepository;
     }
 
     private static String generateCode() {
@@ -245,6 +246,9 @@ public final class AuctionService extends AbstractService {
 
             Auction auction = auctions.get(0);
 
+            final Optional<User> userOpt = userRepository.findById(authentication.id());
+            final User user = userOpt.get();
+
             if (auction.status() == Auction.Status.WAITING_FOR_APPROVAL || auction.status() == Auction.Status.CLOSED) {
                 String message = "Tidak bisa melakukan bidding karena status auction (" + auction.status() + ")";
                 return Response.create("07", "03", message, null);
@@ -263,7 +267,25 @@ public final class AuctionService extends AbstractService {
             if (saved == 0L) {
                 return Response.create("05", "01", "Gagal membuat bidding.", null);
             } else {
-                return Response.create("05", "00", "Sukses membuat bidding.", saved);
+                if (req.bid() > auction.highestBid()) {
+                    auctionRepository.updateHighestBid(id, req.bid(), req.bidder(), user.name());
+                }
+
+                List<AuctionBid> biddings = auctionRepository.findBiddingByAuctionId(auction.id());
+
+                List<BiddingDto> biddingDto = biddings.stream()
+                        .map(b -> new BiddingDto(
+                                b.id(),
+                                b.auctionId(),
+                                b.bid(),
+                                b.bidder(),
+                                b.createdAt().toString()
+                        )).toList();
+
+                Map<String, Object> responseData = new HashMap<>();
+                responseData.put("bidding", biddingDto);
+
+                return Response.create("05", "00", "Sukses membuat bidding.", responseData);
             }
         });
     }

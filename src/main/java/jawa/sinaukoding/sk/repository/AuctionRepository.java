@@ -131,6 +131,15 @@ public class AuctionRepository {
         }
     }
 
+    public void updateHighestBid(Long auctionId, Integer highestBid, Long highestBidderId, String highestBidderName) {
+        String sql = "UPDATE %s SET highest_bid = ?, highest_bidder_id = ?, hignest_bidder_name = ? WHERE id = ?".formatted(Auction.TABLE_NAME);
+        try {
+            jdbcTemplate.update(sql, highestBid, highestBidderId, highestBidderName, auctionId);
+        } catch (Exception e) {
+            log.error("Failed to update highest bid: {}", e.getMessage());
+        }
+    }
+
     public List<AuctionBid> findBiddingByAuctionId(Long auctionId) {
         String sql = "SELECT * FROM %s WHERE auction_id = ?".formatted(AuctionBid.TABLE_NAME);
         return jdbcTemplate.query(sql, new Object[]{auctionId}, (rs, rowNum) -> new AuctionBid(
