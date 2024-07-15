@@ -6,9 +6,9 @@ POST http://127.0.0.1:8080/secured/user/register-buyer
 
 Request Headers
 
-Authorization
+Authorization =
 ```json lines
-Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInJvbGUiOiJBRE1JTiIsImlhdCI6MTcyMDkzMjAzMDMyNiwiZXhwIjoxNzIwOTM1NjMwMzI2fQ.-XFb75wOdUcTEKVixl2YXqanxuLe0SX_wqEGnm07FrE
+Bearer <YOUR TOKEN>
 ```
 
 Body
@@ -27,9 +27,9 @@ POST http://127.0.0.1:8080/secured/auction/list/12
 
 Request Headers
 
-Authorization
+Authorization =
 ```json lines
-Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInJvbGUiOiJBRE1JTiIsImlhdCI6MTcyMDkzMjAzMDMyNiwiZXhwIjoxNzIwOTM1NjMwMzI2fQ.-XFb75wOdUcTEKVixl2YXqanxuLe0SX_wqEGnm07FrE
+Bearer <YOUR TOKEN>
 ```
 
 Body

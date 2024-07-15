@@ -6,9 +6,9 @@ POST http://127.0.0.1:8080/secured/user/register-seller
 
 Request Headers
 
-Authorization
+Authorization =
 ```json lines
-Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInJvbGUiOiJBRE1JTiIsImlhdCI6MTcyMDkzMjAzMDMyNiwiZXhwIjoxNzIwOTM1NjMwMzI2fQ.-XFb75wOdUcTEKVixl2YXqanxuLe0SX_wqEGnm07FrE
+Bearer <YOUR TOKEN>
 ```
 
 Body
@@ -27,9 +27,9 @@ POST http://127.0.0.1:8080/secured/auction/create
 
 Request Headers
 
-Authorization
+Authorization =
 ```json lines
-Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInJvbGUiOiJBRE1JTiIsImlhdCI6MTcyMDkzMjAzMDMyNiwiZXhwIjoxNzIwOTM1NjMwMzI2fQ.-XFb75wOdUcTEKVixl2YXqanxuLe0SX_wqEGnm07FrE
+Bearer <YOUR TOKEN>
 ```
 
 Body
@@ -50,9 +50,9 @@ GET http://127.0.0.1:8080/secured/auction/list
 
 Request Headers
 
-Authorization
+Authorization =
 ```json lines
-Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInJvbGUiOiJBRE1JTiIsImlhdCI6MTcyMDkzMjAzMDMyNiwiZXhwIjoxNzIwOTM1NjMwMzI2fQ.-XFb75wOdUcTEKVixl2YXqanxuLe0SX_wqEGnm07FrE
+Bearer <YOUR TOKEN>
 ```
 
 Query Params (page = 1, size = 10, name = kulkas)
@@ -63,9 +63,9 @@ GET http://127.0.0.1:8080/secured/auction/list/12
 
 Request Headers
 
-Authorization
+Authorization =
 ```json lines
-Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInJvbGUiOiJBRE1JTiIsImlhdCI6MTcyMDkzMjAzMDMyNiwiZXhwIjoxNzIwOTM1NjMwMzI2fQ.-XFb75wOdUcTEKVixl2YXqanxuLe0SX_wqEGnm07FrE
+Bearer <YOUR TOKEN>
 ```
 
 ### 5. Update Status Auction (ONLY ADMIN)
@@ -74,9 +74,9 @@ PUT http://127.0.0.1:8080/secured/auction/status
 
 Request Headers
 
-Authorization
+Authorization =
 ```json lines
-Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInJvbGUiOiJBRE1JTiIsImlhdCI6MTcyMDkzMjAzMDMyNiwiZXhwIjoxNzIwOTM1NjMwMzI2fQ.-XFb75wOdUcTEKVixl2YXqanxuLe0SX_wqEGnm07FrE
+Bearer <YOUR TOKEN>
 ```
 
 Body (IF APPROVED)
@@ -103,9 +103,9 @@ PUT http://127.0.0.1:8080/secured/auction/close
 
 Request Headers
 
-Authorization
+Authorization =
 ```json lines
-Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInJvbGUiOiJBRE1JTiIsImlhdCI6MTcyMDkzMjAzMDMyNiwiZXhwIjoxNzIwOTM1NjMwMzI2fQ.-XFb75wOdUcTEKVixl2YXqanxuLe0SX_wqEGnm07FrE
+Bearer <YOUR TOKEN>
 ```
 
 Body

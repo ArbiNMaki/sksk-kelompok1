@@ -22,7 +22,7 @@ Request Headers
 
 Authorization =
 ```json lines
-Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInJvbGUiOiJBRE1JTiIsImlhdCI6MTcyMDkzMjAzMDMyNiwiZXhwIjoxNzIwOTM1NjMwMzI2fQ.-XFb75wOdUcTEKVixl2YXqanxuLe0SX_wqEGnm07FrE
+Bearer <YOUR TOKEN>
 ```
 
 Query Params (page = 1, size = 10)
@@ -34,9 +34,9 @@ GET http://127.0.0.1:8080/secured/user/current
 
 Request Headers
 
-Authorization
+Authorization =
 ```json lines
-Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInJvbGUiOiJBRE1JTiIsImlhdCI6MTcyMDkzMjAzMDMyNiwiZXhwIjoxNzIwOTM1NjMwMzI2fQ.-XFb75wOdUcTEKVixl2YXqanxuLe0SX_wqEGnm07FrE
+Bearer <YOUR TOKEN>
 ```
 
 ### 4. Update Profile
@@ -45,9 +45,9 @@ PUT http://127.0.0.1:8080/secured/user/update-profile
 
 Request Headers
 
-Authorization
+Authorization =
 ```json lines
-Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInJvbGUiOiJBRE1JTiIsImlhdCI6MTcyMDkzMjAzMDMyNiwiZXhwIjoxNzIwOTM1NjMwMzI2fQ.-XFb75wOdUcTEKVixl2YXqanxuLe0SX_wqEGnm07FrE
+Bearer <YOUR TOKEN>
 ```
 
 Body
@@ -65,9 +65,9 @@ PUT http://localhost:8080/secured/user/reset-password
 
 Request Headers
 
-Authorization
+Authorization =
 ```json lines
-Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInJvbGUiOiJBRE1JTiIsImlhdCI6MTcyMDkzMjAzMDMyNiwiZXhwIjoxNzIwOTM1NjMwMzI2fQ.-XFb75wOdUcTEKVixl2YXqanxuLe0SX_wqEGnm07FrE
+Bearer <YOUR TOKEN>
 ```
 
 Body 
@@ -85,9 +85,9 @@ DELETE http://localhost:8080/secured/user/delete-user
 
 Request Headers
 
-Authorization
+Authorization =
 ```json lines
-Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInJvbGUiOiJBRE1JTiIsImlhdCI6MTcyMDkzMjAzMDMyNiwiZXhwIjoxNzIwOTM1NjMwMzI2fQ.-XFb75wOdUcTEKVixl2YXqanxuLe0SX_wqEGnm07FrE
+Bearer <YOUR TOKEN>
 ```
 
 Body
