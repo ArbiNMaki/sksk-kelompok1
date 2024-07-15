@@ -44,7 +44,7 @@ Body
 }
 ```
 
-### 3. List Auction
+### 3. List Auction (ALL ROLE)
 
 GET http://127.0.0.1:8080/secured/auction/list
 
@@ -57,7 +57,7 @@ Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsInJvbGUiOiJBRE1JTiIsImlh
 
 Query Params (page = 1, size = 10, name = kulkas)
 
-### 4. List Auction By ID
+### 4. List Auction By ID (ALL ROLE)
 
 GET http://127.0.0.1:8080/secured/auction/list/12
 
