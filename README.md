@@ -13,4 +13,4 @@
 
 Postman Docs -> [Postman](https://documenter.getpostman.com/view/14437092/2sA3kPpjMo)
 
-Markdown Doc -> ## [Docs](https://github.com/ArbiNMaki/sksk-kelompok1/tree/main/docs/Lelang)
+Markdown Doc -> [Docs](https://github.com/ArbiNMaki/sksk-kelompok1/tree/main/docs/Lelang)
