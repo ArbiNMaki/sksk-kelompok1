@@ -191,4 +191,33 @@ public final class UserService extends AbstractService {
         return Response.create("11", "00", "Success", userDto);
     }
 
+    public Response<Object> updateProfile(final Authentication auth, final UpdateProfileReq req,long id) {
+        return precondition(auth, User.Role.ADMIN,User.Role.BUYER,User.Role.SELLER).orElseGet(() -> {
+            if (id == 0L){
+                return Response.badRequest();
+            }
+            final User user = new User(
+                    id, //
+                    req.name(), //
+                    req.email(), //
+                    null, //
+                    null,
+                    null, //
+                    null, //
+                    null, //
+                    null, //
+                    OffsetDateTime.now(), //
+                    null //
+            );
+
+            final Long update = userRepository.updateProfile(user);
+
+            if(update == 0L){
+                return Response.create("06", "01", "gagal update profile", update);
+            }
+
+            return Response.create("06", "00",  "sukses update profile", update);
+        });
+    }
+
 }
