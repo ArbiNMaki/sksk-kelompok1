@@ -8,6 +8,9 @@ public record AuctionDto(
         Integer minimumPrice,
         String startedAt,
         String endedAt,
+        Integer highestBid,
+        Long highestBidderId,
+        String highestBidderName,
         String status
 ) {
 }
