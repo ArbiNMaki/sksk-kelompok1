@@ -9,6 +9,7 @@ import jawa.sinaukoding.sk.service.AuctionService;
 import jawa.sinaukoding.sk.util.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/secured/auction")
 public class AuctionController  {

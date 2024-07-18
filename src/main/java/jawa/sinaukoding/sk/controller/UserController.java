@@ -7,6 +7,7 @@ import jawa.sinaukoding.sk.service.UserService;
 import jawa.sinaukoding.sk.util.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/secured/user")
 public class UserController {
