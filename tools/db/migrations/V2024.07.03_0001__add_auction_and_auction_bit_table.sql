@@ -9,7 +9,7 @@ create TABLE IF NOT EXISTS sk_auction
     ended_at TIMESTAMP WITH TIME ZONE NOT NULL,
     highest_bid INTEGER NOT NULL,
     highest_bidder_id NOT NULL,
-    hignest_bidder_name VARCHAR(128) NOT NULL,
+    highest_bidder_name VARCHAR(128) NOT NULL,
     status VARCHAR(16),
     created_by INT NOT NULL,
     updated_by INT,

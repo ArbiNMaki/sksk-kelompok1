@@ -2,12 +2,33 @@ spring:
   application:
     name: sk
   datasource:
-    url: jdbc:sqlite:./tools/db/data/sk.db
-    username: admin
-    password: admin
-    driverClassName: org.sqlite.JDBC
+    url: jdbc:mysql://localhost:3306/sksk_db
+    username: root
+    password: malang234
+    driverClassName: com.mysql.cj.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 10
+      maximum-pool-size: 50
   jpa:
-    database-platform: org.hibernate.dialect.SQLiteDialect
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: group_id
+      auto-offset-reset: earliest
 sk:
   jwt:
     key: 46dcf409d6aafd07cda7a224c1bfba8aa85b66dae9d037984881beef6516118d
+
+resilience4j:
+  ratelimiter:
+    instances:
+      default:
+        limit-for-period: 5
+        limit-refresh-period: 10s
+        timeout-duration: 0

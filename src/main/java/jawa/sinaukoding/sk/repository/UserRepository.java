@@ -99,56 +99,76 @@ public class UserRepository {
     }
 
     public Optional<User> findById(final Long id) {
-        if (id == null || id < 0) {
+        if (id == null) {
             return Optional.empty();
         }
-        return Optional.ofNullable(jdbcTemplate.query(con -> {
+        return jdbcTemplate.query(con -> {
             final PreparedStatement ps = con.prepareStatement("SELECT * FROM " + User.TABLE_NAME + " WHERE id=?");
             ps.setLong(1, id);
             return ps;
         }, rs -> {
-            if (rs.getLong("id") <= 0) {
-                return null;
+            if (!rs.next()) {
+                return Optional.empty();
             }
-            final String name = rs.getString("name");
-            final String email = rs.getString("email");
-            final String password = rs.getString("password");
-            final User.Role role = User.Role.valueOf(rs.getString("role"));
-            final Long createdBy = rs.getLong("created_by");
-            final Long updatedBy = rs.getLong("updated_by");
-            final Long deletedBy = rs.getLong("deleted_by");
-            final OffsetDateTime createdAt = rs.getTimestamp("created_at") == null ? null : rs.getTimestamp("created_at").toInstant().atOffset(ZoneOffset.UTC);
-            final OffsetDateTime updatedAt = rs.getTimestamp("updated_at") == null ? null : rs.getTimestamp("updated_at").toInstant().atOffset(ZoneOffset.UTC);
-            final OffsetDateTime deletedAt = rs.getTimestamp("deleted_at") == null ? null : rs.getTimestamp("deleted_at").toInstant().atOffset(ZoneOffset.UTC);
-            return new User(id, name, email, password, role, createdBy, updatedBy, deletedBy, createdAt, updatedAt, deletedAt);
-        }));
+            try {
+                final Long userId = rs.getLong("id");
+                final String name = rs.getString("name");
+                final String email = rs.getString("email");
+                final String password = rs.getString("password");
+                final User.Role role = User.Role.valueOf(rs.getString("role"));
+                final Long createdBy = rs.getLong("created_by");
+                final Long updatedBy = rs.getLong("updated_by");
+                final Long deletedBy = rs.getLong("deleted_by");
+                final OffsetDateTime createdAt = rs.getTimestamp("created_at") == null ? null : rs.getTimestamp("created_at").toInstant().atOffset(ZoneOffset.UTC);
+                final OffsetDateTime updatedAt = rs.getTimestamp("updated_at") == null ? null : rs.getTimestamp("updated_at").toInstant().atOffset(ZoneOffset.UTC);
+                final OffsetDateTime deletedAt = rs.getTimestamp("deleted_at") == null ? null : rs.getTimestamp("deleted_at").toInstant().atOffset(ZoneOffset.UTC);
+                return Optional.of(new User(userId, name, email, password, role, createdBy, updatedBy, deletedBy, createdAt, updatedAt, deletedAt));
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return Optional.empty();
+            }
+        });
     }
 
     public Optional<User> findByEmail(final String email) {
         if (email == null) {
             return Optional.empty();
         }
-        return Optional.ofNullable(jdbcTemplate.query(con -> {
+        return jdbcTemplate.query(con -> {
             final PreparedStatement ps = con.prepareStatement("SELECT * FROM " + User.TABLE_NAME + " WHERE email=?");
             ps.setString(1, email);
             return ps;
         }, rs -> {
-            final Long id = rs.getLong("id");
-            if (id <= 0) {
-                return null;
+            if (!rs.next()) {
+                return Optional.empty();
             }
-            final String name = rs.getString("name");
-            final String password = rs.getString("password");
-            final User.Role role = User.Role.valueOf(rs.getString("role"));
-            final Long createdBy = rs.getLong("created_by");
-            final Long updatedBy = rs.getLong("updated_by");
-            final Long deletedBy = rs.getLong("deleted_by");
-            final OffsetDateTime createdAt = rs.getTimestamp("created_at") == null ? null : rs.getTimestamp("created_at").toInstant().atOffset(ZoneOffset.UTC);
-            final OffsetDateTime updatedAt = rs.getTimestamp("updated_at") == null ? null : rs.getTimestamp("updated_at").toInstant().atOffset(ZoneOffset.UTC);
-            final OffsetDateTime deletedAt = rs.getTimestamp("deleted_at") == null ? null : rs.getTimestamp("deleted_at").toInstant().atOffset(ZoneOffset.UTC);
-            return new User(id, name, email, password, role, createdBy, updatedBy, deletedBy, createdAt, updatedAt, deletedAt);
-        }));
+            try {
+                final Long id = rs.getLong("id");
+                if (id <= 0) {
+                    return Optional.empty();
+                }
+                final String name = rs.getString("name");
+                final String password = rs.getString("password");
+                final User.Role role;
+                try {
+                    role = User.Role.valueOf(rs.getString("role"));
+                } catch (IllegalArgumentException e) {
+                    return Optional.empty();
+                }
+                final Long createdBy = rs.getLong("created_by");
+                final Long updatedBy = rs.getLong("updated_by");
+                final Long deletedBy = rs.getLong("deleted_by");
+                final OffsetDateTime createdAt = rs.getTimestamp("created_at") == null ? null : rs.getTimestamp("created_at").toInstant().atOffset(ZoneOffset.UTC);
+                final OffsetDateTime updatedAt = rs.getTimestamp("updated_at") == null ? null : rs.getTimestamp("updated_at").toInstant().atOffset(ZoneOffset.UTC);
+                final OffsetDateTime deletedAt = rs.getTimestamp("deleted_at") == null ? null : rs.getTimestamp("deleted_at").toInstant().atOffset(ZoneOffset.UTC);
+                return Optional.of(new User(id, name, email, password, role, createdBy, updatedBy, deletedBy, createdAt, updatedAt, deletedAt));
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return Optional.empty();
+            }
+        });
     }
+
 
     public boolean deleteUser(final String name) {
         if (name == null || name.isEmpty()) {

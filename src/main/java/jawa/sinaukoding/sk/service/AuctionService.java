@@ -15,6 +15,10 @@ import jawa.sinaukoding.sk.repository.UserRepository;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
+
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.*;
@@ -25,6 +29,11 @@ public final class AuctionService extends AbstractService {
     private final AuctionRepository auctionRepository;
     private final UserRepository userRepository;
 
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
+
+    private static final String AUCTION = "auction";
+    private static final String BIDDING = "auction";
 
     public AuctionService(final Environment env, final AuctionRepository auctionRepository, UserRepository userRepository) {
         this.auctionRepository = auctionRepository;
@@ -66,7 +75,7 @@ public final class AuctionService extends AbstractService {
             );
 
             final long saved = auctionRepository.saveAuction(newAuction);
-
+            kafkaTemplate.send(AUCTION, "Create Auction : " + saved);
             if (saved == 0L) {
                 return Response.create("05", "01", "Gagal membuat lelang.", null);
             } else {
@@ -293,7 +302,7 @@ public final class AuctionService extends AbstractService {
 
                 Map<String, Object> responseData = new HashMap<>();
                 responseData.put("bidding", biddingDto);
-
+                kafkaTemplate.send(BIDDING, "Create Bidding : " + responseData);
                 return Response.create("05", "00", "Sukses membuat bidding.", responseData);
             }
         });

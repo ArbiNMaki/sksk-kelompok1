@@ -61,7 +61,7 @@ public class AuctionRepository {
                 rs.getInt("offer"),
                 rs.getInt("highest_bid"),
                 rs.getLong("highest_bidder_id"),
-                rs.getString("hignest_bidder_name"),
+                rs.getString("highest_bidder_name"),
                 Auction.Status.valueOf(rs.getString("status")),
                 rs.getTimestamp("started_at").toInstant().atOffset(ZoneOffset.UTC),
                 rs.getTimestamp("ended_at").toInstant().atOffset(ZoneOffset.UTC),
@@ -84,7 +84,7 @@ public class AuctionRepository {
                 rs.getInt("offer"),
                 rs.getInt("highest_bid"),
                 rs.getLong("highest_bidder_id"),
-                rs.getString("hignest_bidder_name"),
+                rs.getString("highest_bidder_name"),
                 Auction.Status.valueOf(rs.getString("status")),
                 rs.getTimestamp("started_at").toInstant().atOffset(ZoneOffset.UTC),
                 rs.getTimestamp("ended_at").toInstant().atOffset(ZoneOffset.UTC),
@@ -132,7 +132,7 @@ public class AuctionRepository {
     }
 
     public void updateHighestBid(Long auctionId, Integer highestBid, Long highestBidderId, String highestBidderName) {
-        String sql = "UPDATE %s SET highest_bid = ?, highest_bidder_id = ?, hignest_bidder_name = ? WHERE id = ?".formatted(Auction.TABLE_NAME);
+        String sql = "UPDATE %s SET highest_bid = ?, highest_bidder_id = ?, highest_bidder_name = ? WHERE id = ?".formatted(Auction.TABLE_NAME);
         try {
             jdbcTemplate.update(sql, highestBid, highestBidderId, highestBidderName, auctionId);
         } catch (Exception e) {

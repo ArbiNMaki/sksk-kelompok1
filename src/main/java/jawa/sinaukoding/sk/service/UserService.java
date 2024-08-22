@@ -18,6 +18,10 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
+
 @Service
 public final class UserService extends AbstractService {
 
@@ -26,6 +30,11 @@ public final class UserService extends AbstractService {
     private final PasswordEncoder passwordEncoder;
     private final byte[] jwtKey;
 
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
+
+    private static final String TOPIC = "users";
+
     public UserService(final Environment env, final UserRepository userRepository, final PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -33,6 +42,7 @@ public final class UserService extends AbstractService {
         this.jwtKey = HexUtils.hexToBytes(skJwtKey);
     }
 
+    @RateLimiter(name = "default")
     public Response<Object> listUsers(final Authentication authentication, final int page, final int size) {
         return precondition(authentication, User.Role.ADMIN).orElseGet(() -> {
             if (page <= 0 || size <= 0) {
@@ -124,7 +134,7 @@ public final class UserService extends AbstractService {
         final String token = JwtUtils.hs256Tokenize(header, payload, jwtKey);
 
         TokenResponse tokenResponse = new TokenResponse(token, exp);
-
+        kafkaTemplate.send(TOPIC, "Hello : " + token);
         return Response.create("08", "00", "Sukses", tokenResponse);
     }
 
@@ -174,6 +184,7 @@ public final class UserService extends AbstractService {
         });
     }
 
+    @RateLimiter(name = "default")
     public Response<Object> currentUser(final Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return Response.unauthorized();
@@ -187,7 +198,7 @@ public final class UserService extends AbstractService {
 
         final User user = userOpt.get();
         final UserCurrentDto userDto = new UserCurrentDto(user.name(), user.email(), user.role().name());
-
+        kafkaTemplate.send(TOPIC, "Current User: " + user.name());
         return Response.create("11", "00", "Success", userDto);
     }
 
@@ -215,7 +226,7 @@ public final class UserService extends AbstractService {
             if(update == 0L){
                 return Response.create("06", "01", "gagal update profile", update);
             }
-
+            kafkaTemplate.send(TOPIC, "User Update : " + user);
             return Response.create("06", "00",  "sukses update profile", update);
         });
     }
